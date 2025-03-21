@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Duplicate Pairs Game</title>
+  <title>Duplicate Pairs Game (5x5)</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,13 +32,13 @@
     }
     #grid-container {
       display: grid;
-      grid-template-columns: repeat(9, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 2px;
       margin-top: 20px;
     }
     .cell {
       background: #e0e0e0;
-      padding: 15px;
+      padding: 20px;
       border: 1px solid #ccc;
       font-weight: bold;
       cursor: pointer;
@@ -49,9 +49,6 @@
       background: lightblue;
     }
     #game-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       font-size: 1.2em;
       margin-bottom: 10px;
     }
@@ -60,7 +57,8 @@
 <body>
   <!-- Start Screen -->
   <div id="start-screen">
-    <h2>Duplicate Pairs Game</h2>
+    <h2>Duplicate Pairs Game (5x5)</h2>
+    <p>Find the two duplicate pairs in each grid! You will be shown a 5x5 grid with numbers made from digits 1–5. Two cells will be replaced to force two duplicate pairs. Select the cells until you have four cells highlighted. If they form two matching pairs, you complete the grid.</p>
     <input type="number" id="gridCountInput" placeholder="Enter number of grids" min="1">
     <br>
     <button id="startGameButton">Start Game</button>
@@ -70,7 +68,6 @@
   <div id="game-screen" style="display:none;">
     <div id="game-info">
       <span id="grid-info">Grid 1 / 0</span>
-      <span id="timer">0</span>
     </div>
     <div id="grid-container"></div>
   </div>
@@ -96,16 +93,10 @@
       document.getElementById("start-screen").style.display = "none";
       document.getElementById("game-screen").style.display = "block";
       updateGridInfo();
-      // Start timer
+      // Start timer (not shown during gameplay)
       startTime = Date.now();
-      timerInterval = setInterval(updateTimer, 1000);
+      timerInterval = setInterval(function(){}, 1000);
       loadGrid();
-    }
-
-    // Update timer every second
-    function updateTimer() {
-      var elapsed = Math.floor((Date.now() - startTime) / 1000);
-      document.getElementById("timer").innerText = elapsed;
     }
 
     // Update grid info display (e.g., "Grid 1/5")
@@ -119,7 +110,7 @@
       selectedCells = [];
       var container = document.getElementById("grid-container");
       container.innerHTML = "";
-      for (let i = 0; i < 81; i++) {
+      for (let i = 0; i < 25; i++) {
         let cell = document.createElement("div");
         cell.className = "cell";
         cell.innerText = gridData[i];
@@ -129,12 +120,12 @@
       }
     }
 
-    // Generate a grid with all 81 unique two-digit numbers (digits 1-9)
+    // Generate a grid with all 25 unique two-digit numbers (digits 1-5)
     // and then replace two random cells with duplicates of two other cells.
     function generateGrid() {
       let numbers = [];
-      for(let tens = 1; tens <= 9; tens++){
-        for(let ones = 1; ones <= 9; ones++){
+      for(let tens = 1; tens <= 5; tens++){
+        for(let ones = 1; ones <= 5; ones++){
           numbers.push('' + tens + ones);
         }
       }
@@ -142,10 +133,10 @@
       numbers = shuffleArray(numbers);
 
       // Select two candidates that will be duplicated.
-      let candidateIndex1 = Math.floor(Math.random() * 81);
+      let candidateIndex1 = Math.floor(Math.random() * 25);
       let candidateIndex2;
       do {
-        candidateIndex2 = Math.floor(Math.random() * 81);
+        candidateIndex2 = Math.floor(Math.random() * 25);
       } while(candidateIndex2 === candidateIndex1);
       let candidateNumber1 = numbers[candidateIndex1];
       let candidateNumber2 = numbers[candidateIndex2];
@@ -153,14 +144,14 @@
       // Select two target indices to replace with duplicates (ensuring no overlap)
       let dupTarget1;
       do {
-        dupTarget1 = Math.floor(Math.random() * 81);
+        dupTarget1 = Math.floor(Math.random() * 25);
       } while(dupTarget1 === candidateIndex1 || dupTarget1 === candidateIndex2);
       let dupTarget2;
       do {
-        dupTarget2 = Math.floor(Math.random() * 81);
+        dupTarget2 = Math.floor(Math.random() * 25);
       } while(dupTarget2 === candidateIndex1 || dupTarget2 === candidateIndex2 || dupTarget2 === dupTarget1);
 
-      // Replace the selected cells with the candidate numbers
+      // Replace the selected cells with the candidate numbers to force duplicate pairs.
       numbers[dupTarget1] = candidateNumber1;
       numbers[dupTarget2] = candidateNumber2;
 
